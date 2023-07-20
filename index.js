@@ -43,6 +43,39 @@ async function run() {
       console.log(result);
       res.send(result);
     });
+    app.post('/review/:id', async (req, res) => {
+      const bookId = req.params.id;
+      const review = req.body.review;
+
+      const result = await bookCollection.updateOne(
+        { _id: new ObjectId(bookId) },
+        { $push: { reviews: review } }
+      );
+
+      if (result.modifiedCount !== 1) {
+        res.json({ error: 'Book not found or review not added' });
+        return;
+      }
+
+      res.json({ message: 'review added successfully' });
+    });
+
+    app.get('/review/:id', async (req, res) => {
+      const bookId = req.params.id;
+
+      const result = await bookCollection.findOne(
+        { _id: new ObjectId(bookId) },
+        { projection: { _id: 0, reviews: 1 } }
+      );
+
+      if (result) {
+        res.json(result);
+      } else {
+        res.status(404).json({ error: 'Book not found' });
+      }
+    });
+
+
   } finally {
     
   }
