@@ -30,6 +30,12 @@ async function run() {
     console.log("DB connect successfully! ");
 
     // API
+    app.post("/book", async (req, res) => {
+      const book = req.body;
+      const result = await bookCollection.insertOne(book);
+      res.send(result);
+    });
+    
     app.get("/books", async (req, res) => {
       const cursor = bookCollection.find({});
       const books = await cursor.toArray();
