@@ -35,8 +35,8 @@ async function run() {
       const result = await bookCollection.insertOne(book);
       res.send(result);
     });
-    
-    app.get("/books", async (req, res) => {
+
+    app.get("/book", async (req, res) => {
       const cursor = bookCollection.find({});
       const books = await cursor.toArray();
       res.send(books);
@@ -49,6 +49,15 @@ async function run() {
       console.log(result);
       res.send(result);
     });
+
+     app.delete("/book/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log(id);
+      const result = await bookCollection.deleteOne({ _id: new ObjectId(id) });
+      console.log(result);
+      res.send(result);
+    });
+
     app.post('/review/:id', async (req, res) => {
       const bookId = req.params.id;
       const review = req.body.review;
