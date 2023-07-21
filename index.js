@@ -30,7 +30,7 @@ async function run() {
     console.log("DB connect successfully! ");
 
     // API
-    app.post("/book", async (req, res) => {
+    app.post("/books", async (req, res) => {
       const book = req.body;
       const result = await bookCollection.insertOne(book);
       res.send(result);
@@ -56,6 +56,26 @@ async function run() {
       const result = await bookCollection.deleteOne({ _id: new ObjectId(id) });
       console.log(result);
       res.send(result);
+    });
+
+    app.patch("/book/:id", async (req, res) => {
+      const id = req.params.id;
+      const updatedData = req.body; // Data to update the book
+
+      try {
+        const result = await bookCollection.updateOne(
+          { _id: new ObjectId(id) },
+          { $set: updatedData }
+        );
+
+        if (result.modifiedCount === 1) {
+          res.status(200).json({ message: "Book updated successfully" });
+        } else {
+          res.status(404).json({ error: "Book not found" });
+        }
+      } catch (error) {
+        res.status(500).json({ error: "Failed to update book" });
+      }
     });
 
     app.post('/review/:id', async (req, res) => {
